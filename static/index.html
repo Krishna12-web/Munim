@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Munim, merchant copilot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#00BAF2;--navy:#002970;--ink:#0B1F3A;--mute:#5B6B82;--line:#E3E8EF;--bg:#F4F8FB;--card:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"DM Sans","Noto Sans Devanagari",system-ui,sans-serif;font-size:16px;line-height:1.5}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.logout{background:transparent;border:1px solid #fff;color:#fff;border-radius:6px;padding:6px 10px;min-height:40px}
+.login{max-width:360px;width:100%;margin:auto}
+.login label{display:block;font-weight:700;margin-bottom:6px}
+.login input{width:100%;font:inherit;border:1.5px solid var(--navy);border-radius:8px;padding:10px 12px;min-height:44px;margin-bottom:12px}
+.login-error{color:#B3261E;margin-top:10px}
+.auth-toggle{background:none;border:0;color:var(--navy);text-decoration:underline;padding:10px 0}
+.app{max-width:430px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:var(--bg);box-shadow:0 0 0 1px var(--line)}
+header{background:var(--navy);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:18px 18px 20px}
+header h1{font-size:19px;line-height:1.25;margin:0;font-weight:700}
+header p{margin:2px 0 0;color:#B8C7E0;font-size:13px}
+.lang{display:flex;border:1.5px solid #fff;border-radius:6px;overflow:hidden}
+.lang button{background:none;border:0;color:#fff;padding:6px 11px;font-weight:700;font-size:14px}
+.lang button[aria-pressed="true"]{background:#fff;color:var(--navy)}
+body.home header{padding-bottom:58px}
+main{flex:1;padding:16px 16px 24px;display:flex;flex-direction:column;gap:14px;animation:in .25s ease-out}
+body.home main{padding-top:0}
+@keyframes in{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){main{animation:none}}
+.note{font-size:12.5px;color:var(--mute);margin:0}
+h2{font-size:17px;line-height:1.3;font-weight:700;margin:0 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.card p{margin:0}
+.hero{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--blue);border-radius:12px;padding:18px;margin-top:-42px;box-shadow:0 6px 18px rgba(0,41,112,.12)}
+.hero .lbl{color:var(--mute);font-size:14px}
+.hero .amt{font-size:36px;font-weight:700;color:var(--navy);line-height:1.2;font-variant-numeric:tabular-nums}
+.delta{font-size:14px;font-weight:500}.delta.dn{color:#B3261E}.delta.up{color:#0A7A45}
+.hrow{display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:8px;color:var(--mute);font-size:14px}
+.qas{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.qa{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 4px 10px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--ink)}
+.ic{width:40px;height:40px;border-radius:50%;background:#E6F8FE;display:grid;place-items:center;color:var(--navy)}
+.ic svg,nav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tx{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.tx:last-child{border-bottom:0}
+.av{width:40px;height:40px;border-radius:50%;background:#E6F8FE;color:var(--navy);display:grid;place-items:center;font-weight:700;font-size:14px}
+.tx b{display:block;font-weight:500}.tx small{color:var(--mute)}
+.tx strong{color:#0A7A45;font-variant-numeric:tabular-nums}
+.btn{background:var(--navy);color:#fff;border:1.5px solid var(--navy);border-radius:8px;padding:10px 16px;font-weight:700;min-height:44px}
+.btn.alt{background:#fff;color:var(--navy)}
+.btn:disabled{opacity:.6;cursor:default}
+nav{position:sticky;bottom:0;display:grid;grid-template-columns:repeat(3,1fr);background:#fff;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{background:none;border:0;padding:10px 4px 9px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:13px;font-weight:500;color:var(--mute);border-top:3px solid transparent;margin-top:-1px}
+nav button[aria-current="page"]{border-top-color:var(--blue);color:var(--navy);font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips .btn{font-weight:500;padding:8px 12px;min-height:40px;text-align:left}
+.chat{display:flex;flex-direction:column;gap:12px}
+.msg{padding:12px 14px;border-radius:12px;max-width:92%;border:1px solid var(--line);background:#fff;align-self:flex-start}
+.msg.me{align-self:flex-end;background:var(--navy);color:#fff;border-color:var(--navy)}
+.msg p{margin:0}
+details{margin-top:8px;font-size:13px;color:var(--mute)}
+summary{cursor:pointer;font-weight:700}
+details ul{margin:6px 0 0;padding-left:18px}
+.cust{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.cust:last-child{border-bottom:0}
+.cust b{display:block;font-weight:500}.cust small{color:var(--mute)}
+.draft{margin-top:12px;padding:12px;border:1.5px dashed var(--navy);border-radius:10px}
+.draft p{margin:0 0 12px}
+.askf{display:flex;gap:8px}
+.askf input{flex:1;min-width:0;font:inherit;color:var(--ink);background:#fff;border:1.5px solid var(--navy);border-radius:8px;padding:10px 12px;min-height:44px}
+.askf input::placeholder{color:var(--mute)}
+.paytm-form label{display:block;font-weight:700;margin:10px 0 6px}
+.paytm-form input{width:100%;font:inherit;border:1.5px solid var(--line);border-radius:8px;padding:10px 12px;min-height:44px}
+.paytm-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.paytm-error{color:#B3261E;margin-top:10px}
+.bars{width:100%;height:auto;display:block;color:var(--blue);margin-top:4px}
+.bars text{fill:var(--ink);font:12px "DM Sans",sans-serif}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div><h1 id="shop">Sharma General Store</h1><p id="sub"></p></div>
+    <div class="lang" role="group" aria-label="Language">
+      <button data-l="en" aria-pressed="true">EN</button><button data-l="hi" aria-pressed="false">हिं</button>
+    </div>
+    <button id="logout" class="logout" type="button" hidden>Log out</button>
+  </header>
+  <main id="main"></main>
+  <nav id="nav"></nav>
+</div>
+<script>
+// Built-in demo data is shown only until this account imports or syncs real data.
+var T=[["09:12","Ramesh Kumar",240,"UPI"],["09:40","Sunita Devi",120,"UPI"],["10:25","Walk-in",65,"UPI"],["11:05","Anil Gupta",810,"Card"],["12:30","Pooja Verma",330,"UPI"],["13:15","Walk-in",95,"UPI"],["14:02","Mohd. Saleem",1260,"UPI"],["15:20","Kavita Rani",185,"UPI"],["18:40","Walk-in",150,"UPI"],["19:30","Rekha Singh",420,"UPI"]];
+var PREV=[4120,5230,4650,3720,3890,4460], DAYS=["Fri","Sat","Sun","Mon","Tue","Wed","Thu"];
+var SET={c:4460,r:350,h:500};
+var LAPSED=[["Geeta Sharma",24,380],["Vikram Singh",19,620],["Neha Gupta",31,290]];
+var tot,avg,pct,down,big;
+function calc(){tot=T.reduce(function(a,t){return a+t[2]},0);avg=PREV.reduce(function(a,b){return a+b})/PREV.length;pct=Math.round(Math.abs(tot-avg)/avg*100);down=tot<avg;big=T.reduce(function(a,t){return t[2]>a[2]?t:a})}
+calc();
+var SAMP={T:T,PREV:PREV,DAYS:DAYS,LAPSED:LAPSED,SET:SET};
+var fmt=function(n){return "\u20B9"+n.toLocaleString("en-IN")};
+var tabs=["home","ask","cust"];
+var S={
+en:{sub:"Sample data for demonstration",tabs:["Home","Ask","Customers"],led:"Today's ledger",total:"Total collected",brief:"Evening briefing",play:"Read aloud",week:"Collections, last 7 days",
+ ask:"Ask about your business",ph:"Try one of these questions",qs:["How are today's sales?","Why is my settlement short?","Who stopped coming?"],src:"Transactions used",
+ lap:"Customers who stopped visiting",days:" days since last visit",draft:"Draft message",appr:"Open in WhatsApp",sent:"Marked as sent (simulated)",note:"WhatsApp opens with the message ready. You press send.",pick:"Choose a CSV file",imp:"Use your own payment report",impn:"A CSV with date and amount columns. Optional: time, name, status, mode, phone. Dates as DD/MM/YYYY or YYYY-MM-DD. The latest date in the file is treated as today. The file is read in your browser. When you use Ask, the figures it needs are sent to Claude.",sample:"Back to sample data",file:"Data source:",bad:"Could not read this file. It needs a date column, an amount column and at least two different days.",none:"No regular customers have gone quiet in this file. A customer needs at least 3 visits on different days before they can be flagged.",nos:"There is no settlement data in this file.",typ:"Type your question",go:"Ask",busy:"Checking your records...",fail:"Could not reach the assistant. Try one of the suggested questions."},
+hi:{sub:"प्रदर्शन के लिए नमूना डेटा",tabs:["होम","पूछें","ग्राहक"],led:"आज का खाता",total:"कुल वसूली",brief:"शाम का सारांश",play:"सुनें",week:"पिछले 7 दिन की वसूली",
+ ask:"अपने कारोबार के बारे में पूछें",ph:"इनमें से कोई सवाल चुनें",qs:["आज की बिक्री कैसी रही?","मेरा सेटलमेंट कम क्यों आया?","कौन से ग्राहक नहीं आ रहे?"],src:"इस्तेमाल हुए लेनदेन",
+ lap:"जो ग्राहक आना बंद कर चुके हैं",days:" दिन से नहीं आए",draft:"संदेश का मसौदा",appr:"WhatsApp में खोलें",sent:"भेजा गया (नकली)",note:"WhatsApp में संदेश तैयार खुलेगा। भेजने का बटन आप दबाएँगे।",pick:"CSV फ़ाइल चुनें",imp:"अपनी पेमेंट रिपोर्ट इस्तेमाल करें",impn:"CSV फ़ाइल जिसमें date और amount के कॉलम हों। चाहें तो time, name, status, mode, phone भी। तारीख़ DD/MM/YYYY या YYYY-MM-DD में हो। फ़ाइल की सबसे नई तारीख़ को आज माना जाता है। फ़ाइल आपके ब्राउज़र में ही पढ़ी जाती है। पूछें टैब इस्तेमाल करने पर ज़रूरी आँकड़े Claude को भेजे जाते हैं।",sample:"नमूना डेटा पर लौटें",file:"डेटा स्रोत:",bad:"यह फ़ाइल पढ़ी नहीं जा सकी। इसमें तारीख़ का कॉलम, राशि का कॉलम और कम से कम दो अलग दिन चाहिए।",none:"इस फ़ाइल में कोई नियमित ग्राहक दूर नहीं हुआ। किसी ग्राहक को चिह्नित करने के लिए अलग-अलग दिनों में कम से कम 3 बार आना ज़रूरी है।",nos:"इस फ़ाइल में सेटलमेंट का डेटा नहीं है।",typ:"अपना सवाल लिखें",go:"पूछें",busy:"आपके रिकॉर्ड देखे जा रहे हैं...",fail:"सहायक से संपर्क नहीं हो सका। सुझाए गए सवालों में से कोई चुनें।"}
+};
+var st={tab:"home",l:"en",chat:[],draft:null,sent:{}};
+var csrfToken=null,authenticated=false,loginError="",authMode="login";
+var paytmStatus={configured:false,mid:null},paytmError="";
+var ICON={rep:'<path d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h7"/>',spk:'<path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 010 6"/>',home:'<path d="M3 11l9-8 9 8M5 10v10h14V10"/>',ask:'<path d="M4 5h16v11H9l-5 4z"/>',cust:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-4 3.2-6 6.5-6s5.7 2 6.5 6M16 5a3.5 3.5 0 010 6.5M18 14c2 .7 3.2 2.700 3.500 6"/>'};
+function brief(){var l=st.l;return l==="en"?"Today you received "+T.length+" payments totalling "+fmt(tot)+". That is "+pct+"% "+(down?"below":"above")+" your average of the last six days ("+fmt(avg)+").":
+ "आज "+T.length+" भुगतान आए, कुल "+fmt(tot)+"। यह पिछले छह दिनों के औसत ("+fmt(avg)+") से "+pct+"% "+(down?"कम":"ज़्यादा")+" है।"}
+function answer(i){var l=st.l,src;
+ if(i===0){src=T.map(function(t){return t[0]+" "+t[1]+" "+t[3]+" "+fmt(t[2])});
+  return {t:l==="en"?"Collections today are "+fmt(tot)+" from "+T.length+" payments. The largest was "+fmt(big[2])+" from "+big[1]+".":"आज की कुल वसूली "+fmt(tot)+" है, "+T.length+" भुगतान से। सबसे बड़ा भुगतान "+fmt(big[2])+" का था, "+big[1]+" से।",s:src}}
+ if(i===1&&!SET)return {t:S[st.l].nos,s:["No records used"]};
+ if(i===1){var net=SET.c-SET.r-SET.h;src=["Wed collections "+fmt(SET.c),"Refund deducted -"+fmt(SET.r),"On hold for review -"+fmt(SET.h),"Credited "+fmt(net)];
+  return {t:l==="en"?"Wednesday's collections were "+fmt(SET.c)+". "+fmt(SET.r)+" was deducted for one refund and "+fmt(SET.h)+" is on hold for review, so "+fmt(net)+" was credited.":"बुधवार की वसूली "+fmt(SET.c)+" थी। एक रिफंड के "+fmt(SET.r)+" कटे और "+fmt(SET.h)+" जाँच के लिए रुके हैं, इसलिए "+fmt(net)+" जमा हुए।",s:src}}
+ if(!LAPSED.length)return {t:S[st.l].none,s:["No records used"]};
+ src=LAPSED.map(function(c){return c[0]+", "+c[1]+" days, usual spend "+fmt(c[2])});
+ return {t:l==="en"?LAPSED.length+" regular customers have not visited in over two weeks: "+LAPSED.map(function(c){return c[0]}).join(", ")+". Open the Customers tab to message them.":"नियमित "+LAPSED.length+" ग्राहक दो हफ़्ते से ज़्यादा से नहीं आए: "+LAPSED.map(function(c){return c[0]}).join(", ")+"। संदेश भेजने के लिए ग्राहक टैब खोलें।",s:src}}
+function msgText(n){return st.l==="en"?"Hello "+n+", it has been a while since your last visit. We have fresh stock this week. Please drop by.":"नमस्ते "+n+" जी, आपको दुकान पर आए काफ़ी दिन हो गए। इस हफ़्ते ताज़ा सामान आया है, आइए ज़रूर।"}
+function speak(t){try{var u=new SpeechSynthesisUtterance(t);u.lang=st.l==="hi"?"hi-IN":"en-IN";speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+function bars(){var v=PREV.concat([tot]),m=Math.max.apply(null,v),o='<svg class="bars" viewBox="0 0 301 120" role="img" aria-label="'+S[st.l].week+'">';
+ v.forEach(function(x,i){var h=Math.round(x/m*76),a=i*43;o+='<rect x="'+(a+4)+'" y="'+(88-h)+'" width="34" height="'+h+'" fill="currentColor" opacity="'+(i===6?1:.35)+'"/><text x="'+(a+21)+'" y="106" text-anchor="middle">'+DAYS[i]+'</text><text x="'+(a+21)+'" y="'+(83-h)+'" text-anchor="middle" font-size="10">'+(x/1000).toFixed(1)+'k</text>'});
+ return o+"</svg>"}
+function mlcards(){if(!FC)return"";var en=st.l==="en",o='<section class="card"><h2>'+(en?"Next 7 days":"अगले 7 दिन का अनुमान")+'</h2>';
+ o+=FC.days.map(function(d){return '<div class="cust"><b>'+d.day+'</b><span>'+fmt(d.pred)+' <small>('+fmt(d.lo)+(en?" to ":" से ")+fmt(d.hi)+')</small></span></div>'}).join("");
+ o+='<p class="note">'+(FC.wape==null?(en?"Not enough history yet to test accuracy (needs 28 days).":"सटीकता परखने के लिए अभी पर्याप्त इतिहास नहीं (28 दिन चाहिए)।"):(en?"Weekday pattern weighted toward recent days. On the last 7 days it was off by "+FC.wape+"%; the rule \"same day last week\" was off by "+FC.naive_wape+"%.":"सप्ताह के दिन के पैटर्न पर आधारित मॉडल, हाल के दिनों को ज़्यादा महत्व। पिछले 7 दिन पर इसमें "+FC.wape+"% का अंतर रहा, जबकि पिछले हफ़्ते के उसी दिन वाले नियम में "+FC.naive_wape+"%।"))+'</p></section>';
+ if(AN.length){o+='<section class="card"><h2>'+(en?"Unusual days":"असामान्य दिन")+'</h2>'+AN.map(function(a){return '<div class="cust"><b>'+a.date+'</b><span>'+fmt(a.total)+' <small>'+(en?"expected about ":"अपेक्षित लगभग ")+fmt(a.expected)+'</small></span></div>'}).join("")+'</section>'}
+ return o}
+function L(a,b){return st.l==="en"?a:b}
+function ini(n){return (n.replace(/[^A-Za-z\u0900-\u097F ]/g,"").trim().split(/\s+/).slice(0,2).map(function(w){return w[0]}).join("")||"W").toUpperCase()}
+function qa(a,t,ic,lab){return '<button class="qa" data-a="'+a+'"'+(t?' data-t="'+t+'"':'')+'><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true">'+ICON[ic]+'</svg></span>'+lab+'</button>'}
+function riskcard(){if(!AR)return"";var n=LAPSED.length;
+ return '<section class="card"><div class="note">'+L("Revenue at risk each month","\u0939\u0930 \u092e\u0939\u0940\u0928\u0947 \u091c\u094b\u0916\u093f\u092e \u092e\u0947\u0902 \u0930\u093e\u091c\u0938\u094d\u0935")+'</div><div class="amt" style="font-size:30px;font-weight:700;color:#B3261E">'+fmt(AR)+'</div><p class="note">'+L("From the "+n+" regular customers listed under Customers who stopped visiting. Estimated from their usual spend and visit gap.","\u0917\u094d\u0930\u093e\u0939\u0915 \u091f\u0948\u092c \u092e\u0947\u0902 \u0926\u093f\u090f "+n+" \u0928\u093f\u092f\u092e\u093f\u0924 \u0917\u094d\u0930\u093e\u0939\u0915\u094b\u0902 \u0938\u0947, \u091c\u094b \u0906\u0928\u093e \u092c\u0902\u0926 \u0915\u0930 \u091a\u0941\u0915\u0947 \u0939\u0948\u0902\u0964 \u0905\u0928\u0941\u092e\u093e\u0928 \u0909\u0928\u0915\u0947 \u0938\u093e\u092e\u093e\u0928\u094d\u092f \u0916\u0930\u094d\u091a \u0914\u0930 \u0906\u0928\u0947 \u0915\u0947 \u0905\u0902\u0924\u0930 \u0938\u0947 \u0932\u0917\u093e\u092f\u093e \u0917\u092f\u093e\u0964")+'</p></section>'}
+function wbcard(){if(!WB.length)return"";var r=WB.filter(function(x){return x.returned}),sum=r.reduce(function(a,x){return a+x.recovered},0);
+ return '<section class="card"><h2>'+L("Win-back results","\u0935\u093e\u092a\u0938\u0940 \u0915\u0947 \u0928\u0924\u0940\u091c\u0947")+'</h2><p>'+L("You contacted "+WB.length+", "+r.length+" paid again afterwards. Recovered "+fmt(sum)+".","\u0906\u092a\u0928\u0947 "+WB.length+" \u0917\u094d\u0930\u093e\u0939\u0915\u094b\u0902 \u0938\u0947 \u0938\u0902\u092a\u0930\u094d\u0915 \u0915\u093f\u092f\u093e, "+r.length+" \u0928\u0947 \u0909\u0938\u0915\u0947 \u092c\u093e\u0926 \u092b\u093f\u0930 \u092d\u0941\u0917\u0924\u093e\u0928 \u0915\u093f\u092f\u093e\u0964 \u0935\u0938\u0942\u0932\u0940 "+fmt(sum)+"\u0964")+'</p>'+WB.map(function(x){return '<div class="cust"><div><b>'+x.name+'</b><small>'+L("Contacted ","\u0938\u0902\u092a\u0930\u094d\u0915 ")+x.contacted+'</small></div><strong>'+(x.returned?fmt(x.recovered):L("Not yet","\u0905\u092d\u0940 \u0928\u0939\u0940\u0902"))+'</strong></div>'}).join("")+'</section>'}
+function paytmCard(){return '<section class="card"><h2>Paytm settlement sync</h2><p class="note">'+(paytmStatus.configured?"Connected MID: "+esc(paytmStatus.mid):"Use the MID and merchant key for this shop from its Paytm merchant account. Credentials are encrypted before storage.")+'</p><p class="note">Sync imports settled payment records into this account and powers its dashboard, forecast, customer insights, and Ask. A sync replaces this account’s currently loaded CSV. Paytm must enable Settlement API access for your merchant account.</p><form class="paytm-form" id="paytm-form"><label for="paytm-mid">Merchant ID (MID)</label><input id="paytm-mid" name="mid" autocomplete="off" maxlength="128" required><label for="paytm-key">Merchant key</label><input id="paytm-key" name="merchant_key" type="password" autocomplete="new-password" maxlength="512" required><div class="paytm-actions"><button class="btn" type="submit">'+(paytmStatus.configured?"Update credentials":"Connect Paytm")+'</button>'+(paytmStatus.configured?'<button class="btn alt" type="button" data-a="disconnect">Disconnect</button>':'')+'</div></form><label for="sync-days">Settlement lookback (1–60 days; 60 recommended for history)</label><input id="sync-days" type="number" min="1" max="60" value="60" style="width:100%;font:inherit;border:1.5px solid var(--line);border-radius:8px;padding:10px 12px;min-height:44px"><div class="paytm-actions"><button class="btn alt" type="button" data-a="sync"'+(paytmStatus.configured?"":' disabled')+'>Sync settlements</button></div>'+(paytmError?'<p class="paytm-error" role="alert">'+esc(paytmError)+'</p>':'')+'</section>'}
+function home(){var s=S[st.l];
+ var rows=T.slice(-10).reverse().map(function(t){return '<div class="tx"><span class="av">'+ini(t[1])+'</span><div><b>'+t[1]+'</b><small>'+(t[0]||"")+(t[0]&&t[3]?", ":"")+t[3]+'</small></div><strong>+'+fmt(t[2])+'</strong></div>'}).join("");
+ var dl=st.l==="en"?pct+"% "+(down?"below":"above")+" your 6-day average":"6 \u0926\u093f\u0928 \u0915\u0947 \u0914\u0938\u0924 \u0938\u0947 "+pct+"% "+(down?"\u0915\u092e":"\u091c\u093c\u094d\u092f\u093e\u0926\u093e");
+ return '<section class="hero"><div class="lbl">'+L("Today\'s collection","\u0906\u091c \u0915\u0940 \u0935\u0938\u0942\u0932\u0940")+'</div><div class="amt">'+fmt(tot)+'</div><div class="delta '+(down?"dn":"up")+'">'+dl+'</div><div class="hrow"><span>'+T.length+L(" payments"," \u092d\u0941\u0917\u0924\u093e\u0928")+'</span><button class="btn" data-a="play">'+s.play+'</button></div></section>'+
+ '<div class="qas">'+qa("tab","ask","ask",L("Ask","\u092a\u0942\u091b\u0947\u0902"))+qa("tab","cust","cust",L("Customers","\u0917\u094d\u0930\u093e\u0939\u0915"))+qa("pick","","rep",L("Import","\u0930\u093f\u092a\u094b\u0930\u094d\u091f"))+qa("play","","spk",L("Listen","\u0938\u0941\u0928\u0947\u0902"))+'</div>'+
+ riskcard()+paytmCard()+'<section class="card"><h2>'+s.brief+'</h2><p>'+brief()+'</p></section>'+
+ '<section class="card"><h2>'+L("Today\'s payments","\u0906\u091c \u0915\u0947 \u092d\u0941\u0917\u0924\u093e\u0928")+'</h2>'+rows+'</section>'+
+ '<section class="card"><h2>'+s.week+'</h2>'+bars()+'</section>'+(typeof mlcards==="function"?mlcards():"")+
+ '<section class="card"><h2>'+s.imp+'</h2><p class="note">'+s.impn+'</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn" data-a="pick">'+s.pick+'</button>'+(st.file?'<button class="btn alt" data-a="reset">'+s.sample+'</button>':'')+'</div>'+(st.err?'<p class="note" role="alert"><strong>'+s.bad+'</strong></p>':'')+'<input type="file" id="f" accept=".csv,text/csv,text/plain" hidden></section><p class="note">'+esc(src())+'</p>'}
+function askPage(){var s=S[st.l],c=st.chat.map(function(m){return m.me?'<div class="msg me"><p>'+m.t+'</p></div>':'<div class="msg ai"><p>'+m.t+'</p><details><summary>'+s.src+'</summary><ul>'+m.s.map(function(x){return"<li>"+x+"</li>"}).join("")+'</ul></details></div>'}).join("");
+ return '<h2>'+s.ask+'</h2><div class="chat" aria-live="polite">'+c+(st.busy?'<div class="msg ai"><p>'+s.busy+'</p></div>':'')+'</div><form class="askf"><input id="qi" type="text" placeholder="'+s.typ+'" aria-label="'+s.typ+'" autocomplete="off"><button class="btn" type="submit">'+s.go+'</button></form><p class="note">'+s.ph+'</p><div class="chips">'+s.qs.map(function(q,i){return '<button class="btn alt" data-a="q" data-i="'+i+'">'+q+'</button>'}).join("")+'</div>'}
+function cust(){var s=S[st.l],r=LAPSED.map(function(c,i){var d=st.draft===i?'<div class="draft"><p>'+msgText(c[0])+'</p>'+'<a class="btn" style="display:inline-block;text-decoration:none" target="_blank" rel="noopener" data-wb="'+i+'" href="'+wa(i)+'">'+s.appr+'</a>'+'</div>':"";
+ return '<div><div class="cust"><div><b>'+c[0]+'</b><small>'+c[1]+s.days+(c[4]!=null?", "+Math.round(c[4]*100)+(st.l==="en"?"% likely to have stopped":"% आना बंद करने की संभावना"):"")+(c[5]?", "+L("contacted ","\u0938\u0902\u092a\u0930\u094d\u0915 \u0915\u093f\u092f\u093e ")+c[5]:"")+'</small></div><button class="btn alt" data-a="draft" data-i="'+i+'">'+s.draft+'</button></div>'+d+'</div>'}).join("");
+ return wbcard()+'<section class="card"><h2>'+s.lap+'</h2>'+(r||'<p class="note">'+s.none+'</p>')+'</section><p class="note">'+s.note+'</p>'}
+function render(){var s=S[st.l];document.body.className=st.tab;document.documentElement.lang=st.l;document.getElementById("sub").textContent=src();
+ if(!authenticated){var signingUp=authMode==="signup";document.getElementById("logout").hidden=true;document.getElementById("nav").innerHTML="";document.getElementById("main").innerHTML='<section class="card login"><h2>'+(signingUp?"Create your account":"Merchant sign in")+'</h2><form id="login-form"><label for="login-email">Email</label><input id="login-email" type="email" maxlength="254" autocomplete="email" required><label for="login-password">Password</label><input id="login-password" type="password" maxlength="128" minlength="'+(signingUp?12:1)+'" autocomplete="'+(signingUp?"new-password":"current-password")+'" required><button class="btn" type="submit">'+(signingUp?"Create account":"Sign in")+'</button><p class="login-error" id="login-error" role="alert">'+esc(loginError)+'</p></form><button class="auth-toggle" id="auth-toggle" type="button">'+(signingUp?"Already have an account? Sign in":"New here? Create an account")+'</button><p class="note">Each account has separate payment and customer data.</p></section>';return}
+ document.getElementById("logout").hidden=false;
+ var m=document.getElementById("main");m.innerHTML=st.tab==="home"?home():st.tab==="ask"?askPage():cust();
+ document.getElementById("nav").innerHTML=tabs.map(function(t,i){return '<button data-a="tab" data-t="'+t+'"'+(st.tab===t?' aria-current="page"':"")+'><svg viewBox="0 0 24 24" aria-hidden="true">'+ICON[t]+'</svg>'+s.tabs[i]+'</button>'}).join("");
+ document.querySelectorAll(".lang button").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.l===st.l)})}
+document.addEventListener("click",function(e){var b=e.target.closest("button");if(!b||b.type==="submit")return;if(b.id==="auth-toggle"){authMode=authMode==="signup"?"login":"signup";loginError="";render();return}if(b.id==="logout"){fetch("/api/auth/logout",{method:"POST",headers:{"X-CSRF-Token":csrfToken}}).finally(function(){authenticated=false;csrfToken=null;authMode="login";render()});return}var a=b.dataset.a,i=+b.dataset.i;
+ if(b.dataset.l){st.l=b.dataset.l;st.chat=st.chat.map(function(){return null}).filter(Boolean);render();return}
+ if(a==="tab"){st.tab=b.dataset.t}
+ else if(a==="pick"){document.getElementById("f").click();return}
+ else if(a==="reset"){useData(SAMP,"")}
+ else if(a==="sync"){var days=Number(document.getElementById("sync-days").value||14);paytmError="";fetch("/api/paytm/sync",{method:"POST",headers:{"Content-Type":"application/json","X-CSRF-Token":csrfToken},body:JSON.stringify({days:days})}).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.detail||"Sync failed");return j})}).then(function(d){useData(d,d.source);paytmError="";render()}).catch(function(err){paytmError=err.message;render()});return}
+ else if(a==="disconnect"){paytmError="";fetch("/api/paytm/credentials",{method:"DELETE",headers:{"X-CSRF-Token":csrfToken}}).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.detail||"Disconnect failed");return j})}).then(function(){paytmStatus={configured:false,mid:null};render()}).catch(function(err){paytmError=err.message;render()});return}
+ else if(a==="play"){speak(brief());return}
+ else if(a==="q"){ask(S[st.l].qs[i],i);return}
+ else if(a==="draft"){st.draft=st.draft===i?null:i}
+ else if(a==="send"){st.sent[i]=1}
+ render()});
+function loadPaytmStatus(){return fetch("/api/paytm/status").then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.detail||"Unable to load Paytm status");return j})}).then(function(j){paytmStatus={configured:!!j.configured,mid:j.mid||null};paytmError="";if(authenticated)render()}).catch(function(e){paytmError=e.message;if(authenticated)render()})}
+function src(){var s=S[st.l];return st.file?s.file+" "+st.file:s.sub}
+function wa(i){var c=LAPSED[i],p=c[3]?String(c[3]).replace(/\D/g,"").slice(-10):"";return "https://wa.me/"+(p.length===10?"91"+p:"")+"?text="+encodeURIComponent(msgText(c[0]))}
+function sp(l){var o=[],c="",q=0;for(var i=0;i<l.length;i++){var ch=l[i];if(ch==='"')q=!q;else if(ch===","&&!q){o.push(c);c=""}else c+=ch}o.push(c);return o}
+function pd(s){s=(s||"").trim();var m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);if(m)return new Date(+m[1],m[2]-1,+m[3]);m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);if(m)return new Date(+m[3],m[2]-1,+m[1]);return null}
+function parse(txt){var L=txt.replace(/^\uFEFF/,"").split(/\r?\n/).filter(function(l){return l.trim()});if(L.length<3)return null;
+ var h=sp(L[0]).map(function(x){return x.trim().toLowerCase()});function ix(re){return h.findIndex(function(x){return re.test(x)})}
+ var iD=ix(/date/),iA=ix(/amount|amt/),iN=ix(/name|payer|customer|party|vpa/),iS=ix(/status/),iM=ix(/mode|method/),iT=ix(/time/),iP=ix(/phone|mobile/);
+ if(iD<0||iA<0)return null;var days={};
+ L.slice(1).forEach(function(l){var c=sp(l),d=pd(c[iD]),a=parseFloat(String(c[iA]||"").replace(/[^0-9.\-]/g,""));
+  if(!d||!(a>0)||(iS>=0&&!/success|settled|paid|complete/i.test(c[iS]||"")))return;
+  var k=d.getTime();(days[k]=days[k]||{r:[]}).r.push([iT>=0?(c[iT]||"").trim().slice(0,5):"",iN>=0&&(c[iN]||"").trim()?c[iN].trim():"Walk-in",a,iM>=0?(c[iM]||"").trim():"",iP>=0?(c[iP]||"").trim():""])});
+ var ks=Object.keys(days).map(Number).sort(function(a,b){return a-b});if(ks.length<2)return null;
+ function sum(k){return days[k].r.reduce(function(a,x){return a+x[2]},0)}
+ var last=ks[ks.length-1],wd=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],pk=ks.slice(-7,-1);
+ var rows=days[last].r.slice().sort(function(a,b){return a[0]<b[0]?-1:a[0]>b[0]?1:0});
+ var by={};ks.forEach(function(k){days[k].r.forEach(function(x){var n=x[1].toLowerCase();if(/walk|unknown/.test(n))return;var e=by[n]=by[n]||{n:x[1],k:[],a:0,p:""};e.a+=x[2];e.p=e.p||x[4];if(e.k.indexOf(k)<0)e.k.push(k)})});
+ var lap=Object.keys(by).map(function(n){return by[n]}).filter(function(c){if(c.k.length<3)return false;var gap=(c.k[c.k.length-1]-c.k[0])/864e5/(c.k.length-1),since=(last-c.k[c.k.length-1])/864e5;return since>=Math.max(7,2*gap)}).sort(function(a,b){return b.a-a.a}).slice(0,6).map(function(c){return [c.n,Math.round((last-c.k[c.k.length-1])/864e5),Math.round(c.a/c.k.length),c.p]});
+ return {T:rows.map(function(x){return [x[0],x[1],x[2],x[3]]}),PREV:pk.map(sum),DAYS:pk.concat([last]).map(function(k){return wd[new Date(k).getDay()]}),LAPSED:lap,SET:null}}
+var FC=null,AN=[],AR=0,WB=[];function useData(d,name){AR=d.AT_RISK||0;WB=d.WINBACK||[];FC=d.forecast||null;AN=d.anomalies||[];T=d.T;PREV=d.PREV;DAYS=d.DAYS;LAPSED=d.LAPSED;SET=d.SET;calc();st.file=name;st.err=0;st.chat=[];st.draft=null;st.sent={};st.tab="home"}
+document.addEventListener("change",function(e){var f=e.target;if(f.id!=="f"||!f.files[0])return;var file=f.files[0],fd=new FormData();fd.append("file",file);fetch("/api/import",{method:"POST",headers:{"X-CSRF-Token":csrfToken},body:fd}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){st.err=0;useData(d,file.name);render()}).catch(function(){st.err=1;render()})});
+var asking=0;
+function esc(x){return String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function tools(log){function t(n,d,f){return {name:n,description:d,inputSchema:{type:"object",properties:{}},execute:function(){var r=f();log.push(n+": "+JSON.stringify(r).slice(0,300));return r}}}
+ return [
+  t("get_today_sales","Today's payments, total, largest payment and the average of the previous 6 days",function(){return {total:tot,count:T.length,largest:{customer:big[1],amount:big[2]},avg_previous_6_days:avg,percent_vs_avg:(down?-pct:pct),payments:T.map(function(x){return {time:x[0],customer:x[1],amount:x[2],method:x[3]}})}}),
+  t("get_week_totals","Daily collections for up to the last 7 days with data, ending with the latest day",function(){var v=PREV.concat([tot]);return DAYS.map(function(d,i){return {day:d,total:v[i]}})}),
+  t("get_settlement","Wednesday settlement: collections, refund deducted, amount on hold, amount credited",function(){return SET?{day:"Wednesday",collections:SET.c,refund_deducted:SET.r,on_hold_for_review:SET.h,credited:SET.c-SET.r-SET.h}:{available:false,reason:"No settlement data in the imported file"}}),
+  t("find_lapsed_customers","Regular customers who have not visited recently, with usual spend",function(){return LAPSED.map(function(c){return {name:c[0],days_since_visit:c[1],usual_spend:c[2]}})})]}
+function ask(q,idx){if(asking||!q)return;asking=1;st.busy=1;st.chat.push({me:1,t:esc(q)});render();
+ fetch("/api/ask",{method:"POST",headers:{"Content-Type":"application/json","X-CSRF-Token":csrfToken},body:JSON.stringify({question:q,lang:st.l})}).then(function(r){return r.json().catch(function(){return {}}).then(function(j){if(!r.ok)throw new Error(j.detail||"Request failed (HTTP "+r.status+")");if(!j||typeof j.answer!=="string")throw new Error("Assistant returned an invalid response");return j})}).then(function(j){var sources=Array.isArray(j.sources)?j.sources.filter(function(x){return typeof x==="string"}):[];st.chat.push({t:esc(j.answer),s:sources.length?sources:["No records used"]})})
+ .catch(function(e){var message=S[st.l].fail;if(e&&e.message)message+=" "+e.message;st.chat.push({t:esc(message),s:["No records used"]})})
+ .then(function(){asking=0;st.busy=0;render()})}
+document.addEventListener("click",function(e){var a=e.target.closest("a[data-wb]");if(!a)return;var n=LAPSED[+a.dataset.wb][0],dr=st.draft;
+ fetch("/api/winback",{method:"POST",headers:{"Content-Type":"application/json","X-CSRF-Token":csrfToken},body:JSON.stringify({name:n}),keepalive:true}).then(function(){return fetch("/api/state")}).then(function(r){return r.json()}).then(function(d){useData(d,d.source);st.tab="cust";st.draft=dr;render()}).catch(function(){})});
+document.addEventListener("submit",function(e){e.preventDefault();if(e.target.id==="login-form"){var email=document.getElementById("login-email"),input=document.getElementById("login-password"),endpoint=authMode==="signup"?"/api/auth/signup":"/api/auth/login";fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:email.value,password:input.value})}).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.detail||"Sign in failed");return j})}).then(function(j){authenticated=true;csrfToken=j.csrf_token;loginError="";return fetch("/api/state")}).then(function(r){if(!r.ok)throw new Error("Unable to load dashboard");return r.json()}).then(function(d){useData(d,d.source||"");authenticated=true;authMode="login";return loadPaytmStatus()}).then(function(){render()}).catch(function(err){authenticated=false;csrfToken=null;loginError=err.message;render()});return}if(e.target.id==="paytm-form"){var mid=document.getElementById("paytm-mid").value,key=document.getElementById("paytm-key").value;paytmError="";fetch("/api/paytm/credentials",{method:"POST",headers:{"Content-Type":"application/json","X-CSRF-Token":csrfToken},body:JSON.stringify({mid:mid,merchant_key:key})}).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.detail||"Unable to save credentials");return j})}).then(function(){return loadPaytmStatus()}).then(function(){render()}).catch(function(err){paytmError=err.message;render()});return}var i=document.getElementById("qi");if(i)ask(i.value.trim())});
+render();
+fetch("/api/auth/status").then(function(r){return r.json()}).then(function(j){authenticated=!!j.authenticated;csrfToken=j.csrf_token||null;if(authenticated)return fetch("/api/state").then(function(r){if(!r.ok)throw new Error("Session expired");return r.json()}).then(function(d){useData(d,d.source||"");loadPaytmStatus()});render()}).catch(function(){authenticated=false;csrfToken=null;render()});
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+.env
+data/*.csv
+data/winback.json
+data/accounts.sqlite3*
+.venv/
+.venv-*/
+__pycache__/
